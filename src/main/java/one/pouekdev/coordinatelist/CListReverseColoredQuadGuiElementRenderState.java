@@ -9,6 +9,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.texture.TextureSetup;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
+import org.joml.Matrix4f;
 
 @Environment(EnvType.CLIENT)
 public record CListReverseColoredQuadGuiElementRenderState(RenderPipeline pipeline, TextureSetup textureSetup, Matrix3x2f pose, int x0, int y0, int x1, int y1, int col1, int col2, @Nullable ScreenRect scissorArea, @Nullable ScreenRect bounds) implements SimpleGuiElementRenderState{
@@ -16,11 +17,19 @@ public record CListReverseColoredQuadGuiElementRenderState(RenderPipeline pipeli
         this(pipeline, textureSetup, pose, x0, y0, x1, y1, col1, col2, scissorArea, createBounds(x0, y0, x1, y1, pose, scissorArea));
     }
 
-    public void setupVertices(VertexConsumer vertices, float depth){
-        vertices.vertex(this.pose(), (float) this.x0(), (float) this.y0(), depth).color(this.col1());
-        vertices.vertex(this.pose(), (float) this.x0(), (float) this.y1(), depth).color(this.col1());
-        vertices.vertex(this.pose(), (float) this.x1(), (float) this.y1(), depth).color(this.col2());
-        vertices.vertex(this.pose(), (float) this.x1(), (float) this.y0(), depth).color(this.col2());
+    @Override
+    public void setupVertices(VertexConsumer vertices){
+        // Convert Matrix3x2f to Matrix4f for vertex operations
+        Matrix3x2f pose = this.pose();
+        Matrix4f matrix4f = new Matrix4f();
+        matrix4f.set(pose.m00(), pose.m01(), 0.0f, pose.m20(),
+                     pose.m10(), pose.m11(), 0.0f, pose.m21(),
+                     0.0f,       0.0f,       1.0f, 0.0f,
+                     0.0f,       0.0f,       0.0f, 1.0f);
+        vertices.vertex(matrix4f, (float) this.x0(), (float) this.y0(), 0.0f).color(this.col1());
+        vertices.vertex(matrix4f, (float) this.x0(), (float) this.y1(), 0.0f).color(this.col1());
+        vertices.vertex(matrix4f, (float) this.x1(), (float) this.y1(), 0.0f).color(this.col2());
+        vertices.vertex(matrix4f, (float) this.x1(), (float) this.y0(), 0.0f).color(this.col2());
     }
 
     @Nullable

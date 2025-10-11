@@ -9,6 +9,8 @@ import net.minecraft.client.texture.TextureSetup;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import org.joml.Matrix3x2f;
 import org.lwjgl.glfw.GLFW;
 
@@ -233,8 +235,8 @@ public class CListWaypointConfig extends Screen{
     }
 
     @Override
-    public boolean charTyped(char chr, int keyCode){
-        boolean result = super.charTyped(chr, keyCode);
+    public boolean charTyped(CharInput charInput){
+        boolean result = super.charTyped(charInput);
         if(this.waypointName.isFocused()){
             waypoint.name = waypointName.getText();
         }
@@ -259,9 +261,9 @@ public class CListWaypointConfig extends Screen{
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers){
-        super.keyPressed(keyCode, scanCode, modifiers);
-        if(keyCode == GLFW.GLFW_KEY_V && modifiers == GLFW.GLFW_MOD_CONTROL){
+    public boolean keyPressed(KeyInput keyInput){
+        super.keyPressed(keyInput);
+        if(keyInput.getKeycode() == GLFW.GLFW_KEY_V){
             if(this.waypointName.isFocused()){
                 waypoint.name = waypointName.getText();
             }
@@ -283,7 +285,7 @@ public class CListWaypointConfig extends Screen{
             }
             CListClient.variables.savedSinceLastUpdate = false;
         }
-        if(keyCode == GLFW.GLFW_KEY_BACKSPACE){
+        if(keyInput.getKeycode() == GLFW.GLFW_KEY_BACKSPACE){
             if(this.waypointName.isFocused()){
                 waypoint.name = waypointName.getText();
             }

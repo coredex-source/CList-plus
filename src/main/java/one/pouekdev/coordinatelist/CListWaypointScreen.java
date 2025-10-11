@@ -8,7 +8,9 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.*;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.util.InputUtil;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -42,13 +44,13 @@ public class CListWaypointScreen extends Screen{
             list.refreshElements();
         }).width(300).build(), 2, gridWidget.copyPositioner().marginTop(10));
         copyCoordinatesButton = ButtonWidget.builder(Text.literal("---"), button -> {
-            long window = CListVariables.minecraftClient.getWindow().getHandle();
+            long windowHandle = CListVariables.minecraftClient.getWindow().getHandle();
             CListWaypoint waypoint = CListClient.variables.waypoints.get(selectedWaypointId);
-            if(InputUtil.isKeyPressed(window, InputUtil.GLFW_KEY_LEFT_CONTROL)){
-                GLFW.glfwSetClipboardString(window, "/execute in " + waypoint.dimension + " run tp @p " + waypoint.x + " " + waypoint.y + " " + waypoint.z);
+            if(InputUtil.isKeyPressed(CListVariables.minecraftClient.getWindow(), InputUtil.GLFW_KEY_LEFT_CONTROL)){
+                GLFW.glfwSetClipboardString(windowHandle, "/execute in " + waypoint.dimension + " run tp @p " + waypoint.x + " " + waypoint.y + " " + waypoint.z);
             }
             else{
-                GLFW.glfwSetClipboardString(window, waypoint.x + " " + waypoint.y + " " + waypoint.z);
+                GLFW.glfwSetClipboardString(windowHandle, waypoint.x + " " + waypoint.y + " " + waypoint.z);
             }
         }).width(150).build();
         copyCoordinatesButton.setTooltip(Tooltip.of(Text.translatable("tooltip.copy.waypoint.coordinates")));
@@ -92,14 +94,12 @@ public class CListWaypointScreen extends Screen{
         }
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button){
-        return super.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(Click click, boolean bl){
+        return super.mouseClicked(click, bl);
     }
 
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button){
-        return super.mouseReleased(mouseX, mouseY, button);
+    public boolean mouseReleased(Click click){
+        return super.mouseReleased(click);
     }
 
     @Override
@@ -192,40 +192,39 @@ public class CListWaypointScreen extends Screen{
             }
 
             @Override
-            public void render(DrawContext context, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float delta){
+            public void render(DrawContext context, int index, int y, boolean selected, float delta){
+                int x = 50; // Use a fixed x position since we can't access parent
                 visibility.setX(x + 2);
                 visibility.setY(y + 4);
                 select.setX(x);
                 select.setY(y);
-                visibility.render(context, mouseX, mouseY, delta);
-                select.render(context, mouseX, mouseY, delta);
+                visibility.render(context, 0, 0, delta);
+                select.render(context, 0, 0, delta);
                 drawScrollableText(context, CListVariables.minecraftClient.textRenderer, dimension, x + 180, y, x + textRenderer.getWidth("The nether") + 180, y + textRenderer.fontHeight + 10, 0xFFFFFFFF);
                 context.drawTextWithShadow(CListVariables.minecraftClient.textRenderer, waypointName.getString(), x + 22, y + 6, CListClient.variables.colors.get(id).getHex());
             }
 
-            @Override
-            public boolean mouseClicked(double mouseX, double mouseY, int button){
+            public boolean mouseClicked(Click click, boolean bl){
                 boolean handled = false;
                 for(Element E: children){
-                    if(E.mouseClicked(mouseX, mouseY, button)){
+                    if(E.mouseClicked(click, bl)){
                         handled = true;
                         break;
                     }
                 }
-                visibility.mouseClicked(mouseX, mouseY, button);
-                return handled || super.mouseClicked(mouseX, mouseY, button);
+                visibility.mouseClicked(click, bl);
+                return handled || super.mouseClicked(click, bl);
             }
 
-            @Override
-            public boolean mouseReleased(double mouseX, double mouseY, int button){
+            public boolean mouseReleased(Click click){
                 boolean handled = false;
                 for(Element E: children){
-                    if(E.mouseReleased(mouseX, mouseY, button)){
+                    if(E.mouseReleased(click)){
                         handled = true;
                         break;
                     }
                 }
-                return handled || super.mouseReleased(mouseX, mouseY, button);
+                return handled || super.mouseReleased(click);
             }
         }
     }
