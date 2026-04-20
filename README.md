@@ -1,4 +1,4 @@
-<img width="128" src="src/main/resources/assets/coordinatelist/icon.png" alt="Gazetteer icon"/>
+<img width="128" src="src/main/resources/assets/gazetteer/icon.png" alt="Gazetteer icon"/>
 
 # Gazetteer
 Gazetteer is a simple minimalistic fabric mod for saving your coordinates. No minimaps. Just a list with in-game waypoints.
