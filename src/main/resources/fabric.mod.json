@@ -1,32 +1,32 @@
 {
   "schemaVersion": 1,
-  "id": "coordinatelist",
+  "id": "gazetteer",
   "version": "${version}",
-  "name": "CList",
-  "description": "Coordinate List (CList for short) is a simple minimalistic fabric mod for saving your coordinates. No minimaps. Just a list with in-game waypoints.",
+  "name": "Gazetteer",
+  "description": "Coordinate List (Gazetteer for short) is a simple minimalistic fabric mod for saving your coordinates. No minimaps. Just a list with in-game waypoints.",
   "authors": [
     "PouekDEV"
   ],
   "contact": {
-    "homepage": "https://modrinth.com/mod/clist",
-    "sources": "https://github.com/PouekDEV/CList",
-    "issues": "https://github.com/PouekDEV/CList/issues"
+    "homepage": "https://modrinth.com/mod/gazetteer",
+    "sources": "https://github.com/PouekDEV/Gazetteer",
+    "issues": "https://github.com/PouekDEV/Gazetteer/issues"
   },
   "license": "MIT License",
-  "icon": "assets/coordinatelist/icon.png",
+  "icon": "assets/gazetteer/icon.png",
   "environment": "client",
   "entrypoints": {
     "main": [
-      "one.pouekdev.coordinatelist.CList"
+      "com.coredex.gazetteer.Gazetteer"
     ],
     "client": [
-      "one.pouekdev.coordinatelist.CListClient"
+      "com.coredex.gazetteer.GazetteerClient"
     ]
   },
   "mixins": [
-    "coordinatelist.mixins.json"
+    "gazetteer.mixins.json"
   ],
-  "accessWidener": "coordinatelist.accesswidener",
+  "accessWidener": "gazetteer.accesswidener",
   "depends": {
     "fabricloader": ">=0.18.2",
     "fabric-api": "*",

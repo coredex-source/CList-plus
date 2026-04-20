@@ -1,0 +1,20 @@
+{
+  "key.category.minecraft.gazetteer": "Skróty klawiszowe Gazetteer",
+  "keybinds.waypoint.add": "Dodaj punkt orientacyjny w obecnym miejscu",
+  "keybinds.waypoints.menu": "Otwórz menu punktów orientacyjnych",
+  "keybinds.waypoints.toggle": "Zmień widoczność punktów orientacyjnych",
+  "gazetteer.midnightconfig.title": "Konfiguracja Gazetteer",
+  "gazetteer.midnightconfig.multiplier": "Rozmiar punktów orientacyjnych",
+  "gazetteer.midnightconfig.renderDistance": "Odległość, na jaką jest widoczny punkt orientacyjny (0 - bez limitu)",
+  "gazetteer.midnightconfig.waypointsToggled": "Pokaż punkty orientacyjne",
+  "gazetteer.midnightconfig.canPlaceDeathpoints": "Twórz punkty orientacyjne przy śmierci",
+  "gazetteer.midnightconfig.waypointTextBackground": "Wyświetlaj tło za nazwą punktu orientacyjnego",
+  "gazetteer.midnightconfig.squareWaypoints": "Zamiast koła wyświetlaj kwadratowy znaczek punktu orientacyjnego",
+  "modmenu.summaryTranslation.gazetteer": "Prosty i minimalistyczny mod na Fabric'a do zapisywania swojej pozycji",
+  "modmenu.descriptionTranslation.gazetteer": "Coordinate List (w skrócie Gazetteer) to prosty i minimalistyczny mod na Fabric'a do zapisywania swojej pozycji. Zero minimap. Tylko prosta lista z wyświetlanymi punktami orientacyjnymi w grze.",
+  "waypoint.last.death": "Ostatnia śmierć",
+  "waypoint.new.waypoint": "Nowy Punkt Orientacyjny",
+  "buttons.add.new.waypoint": "Dodaj nowy punkt orientacyjny w obecnym miejscu",
+  "tooltip.copy.waypoint.coordinates": "Kliknij, aby skopiować współrzędne wybranego punktu orientacyjnego.\n\nUżyj z CTRL, aby skopiować jako komendę teleportującą.",
+  "chat.create.waypoint.message": "[Stwórz punkt orientacyjny]"
+}

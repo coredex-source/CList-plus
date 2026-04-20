@@ -1,0 +1,16 @@
+{
+    "key.category.minecraft.gazetteer": "Gazetteer Tastenkombinationen",
+    "keybinds.waypoint.add": "Wegpunkt hier erstellen",
+    "keybinds.waypoints.menu": "Wegpunkte Menü öffnen",
+    "keybinds.waypoints.toggle": "Sichtbarkeit der Wegpunkte umschalten",
+    "gazetteer.midnightconfig.title": "Gazetteer Konfiguration",
+    "gazetteer.midnightconfig.multiplier": "Größe der Wegpunkte",
+    "gazetteer.midnightconfig.renderDistance": "Sichtweite der Wegpunkte (0 für unendliche Sichtweite)",
+    "gazetteer.midnightconfig.waypointsToggled": "Wegpunkte anzeigen",
+    "gazetteer.midnightconfig.canPlaceDeathpoints": "Automatisch Wegpunkte bei Tod erstellen",
+    "waypoint.last.death": "Letzter Todespunkt",
+    "waypoint.new.waypoint": "Neuer Wegpunkt",
+    "buttons.add.new.waypoint": "Wegpunkt hier erstellen",
+    "tooltip.copy.waypoint.coordinates": "Koordinaten des gewählen Punktes kopieren",
+    "chat.create.waypoint.message": "[Wegpunkt erstellen]"
+}

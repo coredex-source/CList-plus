@@ -1,0 +1,15 @@
+package com.coredex.gazetteer;
+
+import eu.midnightdust.lib.config.MidnightConfig;
+
+public class GazetteerConfig extends MidnightConfig {
+    @Entry(min=5,max=200) public static int multiplier = 10;
+    @Entry(min=0) public static int renderDistance = 0;
+    @Entry public static boolean waypointsToggled = true;
+    @Entry public static boolean canPlaceDeathpoints = true;
+    @Entry public static boolean waypointTextBackground = true;
+    @Entry public static boolean squareWaypoints = false;
+    @Entry public static boolean showCreateWaypointMessage = true;
+    @Entry public static boolean escapeDiscardsChanges = false;
+    @Entry(min=0) public static int maxDeathWaypoints = 10;
+}

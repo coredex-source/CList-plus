@@ -20,7 +20,7 @@ repositories {
 }
 
 loom {
-	accessWidenerPath = file("src/main/resources/coordinatelist.accesswidener")
+	accessWidenerPath = file("src/main/resources/gazetteer.accesswidener")
 }
 
 dependencies {

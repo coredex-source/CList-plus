@@ -1,0 +1,20 @@
+{
+  "key.category.minecraft.gazetteer": "Сочетания Клавиш Gazetteer",
+  "keybinds.waypoint.add": "Добавить метку в текущем месте",
+  "keybinds.waypoints.menu": "Открыть меню меток",
+  "keybinds.waypoints.toggle": "Изменить видимость меток",
+  "gazetteer.midnightconfig.title": "Конфигурация Gazetteer",
+  "gazetteer.midnightconfig.multiplier": "Размер меток",
+  "gazetteer.midnightconfig.renderDistance": "Расстояние, на котором метка видна (0 — без ограничений)",
+  "gazetteer.midnightconfig.waypointsToggled": "Показать метки",
+  "gazetteer.midnightconfig.canPlaceDeathpoints": "Создавать метки при смерти",
+  "gazetteer.midnightconfig.waypointTextBackground": "Показывать фон за названием метки",
+  "gazetteer.midnightconfig.squareWaypoints": "Использовать квадратный значок метки вместо круглого",
+  "modmenu.summaryTranslation.gazetteer": "Простой минималистичный мод Fabric для сохранения координат",
+  "modmenu.descriptionTranslation.gazetteer": "Coordinate List (короче Gazetteer) это Простой минималистичный мод Fabric для сохранения координат. Ноль миникарт. Только простой список с метками, отображаемыми прямо в игре.",
+  "waypoint.last.death": "Последняя смерть",
+  "waypoint.new.waypoint": "Новая метка",
+  "buttons.add.new.waypoint": "Создать новую метку в текущей позиции",
+  "tooltip.copy.waypoint.coordinates": "Нажмите, чтобы скопировать координаты выбранной метки.\n\nИспользуйте CTRL, чтобы скопировать их как команду телепортации.",
+  "chat.create.waypoint.message": "[Создать метку]"
+}

@@ -1,0 +1,20 @@
+{
+  "key.category.minecraft.gazetteer": "Atajos de teclado de Gazetteer",
+  "keybinds.waypoint.add": "Creá un punto de referencia en tu ubicación actual",
+  "keybinds.waypoints.menu": "Abrí el menú de puntos de referencia",
+  "keybinds.waypoints.toggle": "Activá/desactivá la visibilidad de los puntos de referencia",
+  "gazetteer.midnightconfig.title": "Configuración de Gazetteer",
+  "gazetteer.midnightconfig.multiplier": "Tamaño de los puntos de referencia",
+  "gazetteer.midnightconfig.renderDistance": "Distancia de visibilidad del punto de referencia (0 = sin límite)",
+  "gazetteer.midnightconfig.waypointsToggled": "Mostrar los puntos de referencia",
+  "gazetteer.midnightconfig.canPlaceDeathpoints": "Crear un punto de referencia al morir",
+  "gazetteer.midnightconfig.waypointTextBackground": "Mostrar un fondo detrás del nombre del punto de referencia",
+  "gazetteer.midnightconfig.squareWaypoints": "Usar un icono cuadrado en lugar de circular para los puntos de referencia",
+  "modmenu.summaryTranslation.gazetteer": "Un mod simple y minimalista de Fabric para guardar tus coordenadas.",
+  "modmenu.descriptionTranslation.gazetteer": "Coordinate List (Gazetteer) es un mod simple y minimalista de Fabric para guardar tus coordenadas. Nada de minimapas. Solo una lista de puntos de referencia dentro del juego.",
+  "waypoint.last.death": "Tu última muerte",
+  "waypoint.new.waypoint": "Nuevo punto de referencia",
+  "buttons.add.new.waypoint": "Agregá un nuevo punto de referencia en la posición actual",
+  "tooltip.copy.waypoint.coordinates": "Hacé clic para copiar las coordenadas del punto de referencia seleccionado.\n\nUsá CTRL para copiarlo como comando de teletransporte.",
+  "chat.create.waypoint.message": "[Crear un punto de referencia]"
+}

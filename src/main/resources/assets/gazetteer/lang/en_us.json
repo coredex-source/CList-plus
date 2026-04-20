@@ -1,0 +1,23 @@
+{
+  "key.category.minecraft.gazetteer": "Gazetteer Keybinds",
+  "keybinds.waypoint.add": "Add a waypoint in current position",
+  "keybinds.waypoints.menu": "Open waypoints menu",
+  "keybinds.waypoints.toggle": "Toggle waypoints visibility",
+  "gazetteer.midnightconfig.title": "Gazetteer configuration",
+  "gazetteer.midnightconfig.multiplier": "Waypoints' size",
+  "gazetteer.midnightconfig.renderDistance": "The distance to which the waypoint is visible (0 - no limit)",
+  "gazetteer.midnightconfig.waypointsToggled": "Show waypoints",
+  "gazetteer.midnightconfig.canPlaceDeathpoints": "Create waypoints on death",
+  "gazetteer.midnightconfig.waypointTextBackground": "Show background behind the waypoint name",
+  "gazetteer.midnightconfig.squareWaypoints": "Use a square waypoint icon instead of a circle",
+  "gazetteer.midnightconfig.showCreateWaypointMessage": "Show [Create waypoint] message in chat",
+  "gazetteer.midnightconfig.escapeDiscardsChanges": "Escape discards changes in config screens",
+  "gazetteer.midnightconfig.maxDeathWaypoints": "Max death waypoints (0 - unlimited)",
+  "modmenu.summaryTranslation.gazetteer": "A simple minimalistic Fabric mod for saving your coordinates.",
+  "modmenu.descriptionTranslation.gazetteer": "Coordinate List (Gazetteer for short) is a simple minimalistic Fabric mod for saving your coordinates. No minimaps. Just a list with in-game waypoints.",
+  "waypoint.last.death": "Last death",
+  "waypoint.new.waypoint": "New Waypoint",
+  "buttons.add.new.waypoint": "Add a new waypoint in current position",
+  "tooltip.copy.waypoint.coordinates": "Click to copy selected waypoints coordinates.\n\nUse with CTRL to copy as a teleport command.",
+  "chat.create.waypoint.message": "[Create a waypoint]"
+}

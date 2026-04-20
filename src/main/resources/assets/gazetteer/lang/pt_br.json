@@ -1,0 +1,19 @@
+{
+  "key.category.minecraft.gazetteer": "Teclas de Atalho do Gazetteer",
+  "keybinds.waypoint.add": "Adicionar um ponto de referência na posição atual",
+  "keybinds.waypoints.menu": "Abrir menu de pontos de referência",
+  "keybinds.waypoints.toggle": "Alternar visibilidade dos pontos de referência",
+  "gazetteer.midnightconfig.title": "Configuração do Gazetteer",
+  "gazetteer.midnightconfig.multiplier": "Tamanho dos pontos de referência",
+  "gazetteer.midnightconfig.renderDistance": "A distância até a qual o ponto de referência é visível (0 significa sem limite)",
+  "gazetteer.midnightconfig.waypointsToggled": "Mostrar pontos de referência",
+  "gazetteer.midnightconfig.canPlaceDeathpoints": "Criar pontos de referência ao morrer",
+  "gazetteer.midnightconfig.waypointTextBackground": "Mostrar fundo atrás do nome do ponto de referência",
+  "modmenu.summaryTranslation.gazetteer": "Um mod fabric simples e minimalista para salvar suas coordenadas.",
+  "modmenu.descriptionTranslation.gazetteer": "Coordinate List (Lista de Coordenadas ou Gazetteer para abreviar) é um mod fabric simples e minimalista para salvar suas coordenadas. Sem mini-mapas. Apenas uma lista com pontos de referência no jogo.",
+  "waypoint.last.death": "Última morte",
+  "waypoint.new.waypoint": "Novo Ponto de Referência",
+  "buttons.add.new.waypoint": "Adicionar um novo ponto de referência na posição atual",
+  "tooltip.copy.waypoint.coordinates": "Clique para copiar as coordenadas dos pontos de referência selecionados",
+  "chat.create.waypoint.message": "[Criar um ponto de referência]"
+}

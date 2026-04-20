@@ -1,0 +1,19 @@
+{
+  "key.category.minecraft.gazetteer": "Gazetteer",
+  "keybinds.waypoint.add": "現在位置をウェイポイントに追加",
+  "keybinds.waypoints.menu": "ウェイポイントのメニューを開く",
+  "keybinds.waypoints.toggle": "ウェイポイントの表示 ・非表示",
+  "gazetteer.midnightconfig.title": "Gazetteer 設定",
+  "gazetteer.midnightconfig.multiplier": "ウェイポイントの表示サイズ",
+  "gazetteer.midnightconfig.renderDistance": "ウェイポイントが見える距離（0は制限なし）",
+  "gazetteer.midnightconfig.waypointsToggled": "ウェイポイントを表示する",
+  "gazetteer.midnightconfig.canPlaceDeathpoints": "死亡時にウェイポイントを作成する",
+  "gazetteer.midnightconfig.waypointTextBackground": "ウェイポイント名の後ろに背景を表示する",
+  "modmenu.summaryTranslation.gazetteer": "シンプルでミニマルなファブリックMODで座標を保存。",
+  "modmenu.descriptionTranslation.gazetteer": "Coordinate List （略してGazetteer）は、座標を保存するためのシンプルでミニマルなファブリックMODです。ミニマップはありません。ただゲーム内のウェイポイントをリスト表示するだけです。",
+  "waypoint.last.death": "死亡地点",
+  "waypoint.new.waypoint": "新しいウェイポイント",
+  "buttons.add.new.waypoint": "現在位置を新しいウェイポイントに追加する",
+  "tooltip.copy.waypoint.coordinates": "クリックすると、選択したウェイポイントの座標がコピーされます。",
+  "chat.create.waypoint.message": "[ウェイポイントの作成］"
+}
