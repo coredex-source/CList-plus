@@ -1,4 +1,4 @@
-<img width="128" src="src/main/resources/assets/coordinatelist/icon.png" alt="CList icon"/>
+<img width="128" src="src/main/resources/assets/coordinatelist/icon.png" alt="Gazetteer icon"/>
 
 # Gazetteer
 Gazetteer is a simple minimalistic fabric mod for saving your coordinates. No minimaps. Just a list with in-game waypoints.
@@ -24,9 +24,8 @@ Gazetteer is a simple minimalistic fabric mod for saving your coordinates. No mi
 I initially created this mod just for me and my friends. I'm not too fond of these waypoint mods which always have built-in minimap which lagged my game even when it was off. So I made my own mod to fulfill the need for a lightweight, minimalistic waypoint mod.
 
 ### Support
-CList will always receive latest features for the latest version of the game. Porting the newest features to older Minecraft versions is not planned so before creating an issue check if the feature you want isn't already implemented in the latest version of the mod.
-
-You can freely include CList in any mod packs.
+Gazetteer will always receive latest features for the latest version of the game.
+You can freely include Gazetteer in any mod packs.
 
 ### Credits
 PouekDev for creating [CList](https://github.com/PouekDEV/CList) which is the base of this mod.
