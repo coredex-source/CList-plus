@@ -38,7 +38,7 @@ public abstract class GazetteerChatGrabber{
             int y = Math.round(Float.parseFloat(numbersList.get(1)));
             int z = Math.round(Float.parseFloat(numbersList.get(2)));
             Component clickableMessage = Component.translatable("chat.create.waypoint.message").withStyle(ChatFormatting.GREEN).withStyle(style -> style.withClickEvent(new ClickEvent.RunCommand("/gazetteer " + x + " " + y + " " + z)));
-            GazetteerVariables.delayedEvents.add(new GazetteerDelayedEvent(0.1f, () -> GazetteerVariables.minecraftClient.gui.getChat().addClientSystemMessage(clickableMessage)));
+            GazetteerVariables.delayedEvents.add(new GazetteerDelayedEvent(0.1f, () -> GazetteerVariables.minecraftClient.gui.hud.getChat().addClientSystemMessage(clickableMessage)));
         }
     }
 }

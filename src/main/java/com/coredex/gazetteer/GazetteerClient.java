@@ -15,7 +15,6 @@ import eu.midnightdust.lib.config.MidnightConfig;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Random;
 
 public class GazetteerClient implements ClientModInitializer{
@@ -57,10 +56,10 @@ public class GazetteerClient implements ClientModInitializer{
                 }
             }
             while(openWaypointsKeybind.consumeClick()){
-                client.setScreen(new GazetteerWaypointScreen(Component.literal("Waypoints")));
+                client.gui.setScreen(new GazetteerWaypointScreen(Component.literal("Waypoints")));
             }
             while(addAWaypoint.consumeClick()){
-                if(!Objects.equals(client.screen, new GazetteerWaypointScreen(Component.literal("Waypoints")))){
+                if(!(client.gui.screen() instanceof GazetteerWaypointScreen)){
                     Player player = GazetteerVariables.minecraftClient.player;
                     addNewWaypoint((int) Math.floor(player.getX()), (int) Math.floor(player.getY()), (int) Math.floor(player.getZ()), false, true);
                 }
@@ -141,7 +140,7 @@ public class GazetteerClient implements ClientModInitializer{
             }
         }
         if(!death){
-            GazetteerVariables.minecraftClient.setScreen(new GazetteerWaypointConfig(Component.literal("Config"), variables.waypoints.size() - 1, viaKeybind));
+            GazetteerVariables.minecraftClient.gui.setScreen(new GazetteerWaypointConfig(Component.literal("Config"), variables.waypoints.size() - 1, viaKeybind));
         }
     }
 

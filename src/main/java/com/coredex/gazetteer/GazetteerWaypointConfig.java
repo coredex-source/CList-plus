@@ -1,6 +1,5 @@
 package com.coredex.gazetteer;
 
-import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSliderButton;
@@ -33,7 +32,7 @@ public class GazetteerWaypointConfig extends Screen{
     private EditBox waypointName;
     private static EditBox waypointColor;
     private EditBox x, y, z;
-    private SpriteButton changeColor;
+    private GazetteerSpriteButton changeColor;
     private HSVSlider h, s, v;
     private static float[] hsv;
     private boolean confirmed = false;
@@ -66,7 +65,7 @@ public class GazetteerWaypointConfig extends Screen{
             confirmed = true;
             GazetteerClient.deleteWaypoint(id);
             if(!viaKeybind){
-                GazetteerVariables.minecraftClient.setScreen(new GazetteerWaypointScreen(Component.literal("Waypoints")));
+                GazetteerVariables.minecraftClient.gui.setScreen(new GazetteerWaypointScreen(Component.literal("Waypoints")));
             }
             else{
                 onClose();
@@ -76,7 +75,7 @@ public class GazetteerWaypointConfig extends Screen{
             confirmed = true;
             GazetteerClient.variables.savedSinceLastUpdate = false;
             if(!viaKeybind){
-                GazetteerVariables.minecraftClient.setScreen(new GazetteerWaypointScreen(Component.literal("Waypoints")));
+                GazetteerVariables.minecraftClient.gui.setScreen(new GazetteerWaypointScreen(Component.literal("Waypoints")));
             }
             else{
                 onClose();
@@ -115,7 +114,7 @@ public class GazetteerWaypointConfig extends Screen{
             }).bounds((this.width - 150) / 2, (this.height - 20) / 2 + 75, 150, 20).build();
             addRenderableWidget(lockedBtn);
         }
-        changeColor = new SpriteButton((this.width - 50) / 2 + 38, (this.height - 20) / 2 - 15, 12, 12, button -> renderColorPicker = !renderColorPicker);
+        changeColor = new GazetteerSpriteButton((this.width - 50) / 2 + 38, (this.height - 20) / 2 - 15, 12, 12, button -> renderColorPicker = !renderColorPicker, () -> GazetteerSpriteButton.CHANGE_ICON);
         this.h = new HSVSlider((this.width - 50) / 2, (this.height - 20) / 2 - 15, 110, 15, Component.literal("H: " + hsv[0]), hsv[0] / 360, 0);
         this.s = new HSVSlider((this.width - 50) / 2, (this.height - 20) / 2 + 3, 110, 15, Component.literal("S: " + hsv[1]), hsv[1] / 100, 1);
         this.v = new HSVSlider((this.width - 50) / 2, (this.height - 20) / 2 + 20, 110, 15, Component.literal("V: " + hsv[2]), hsv[2] / 100, 2);
@@ -192,8 +191,6 @@ public class GazetteerWaypointConfig extends Screen{
 
         @Override
         public void extractWidgetRenderState(@NonNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta){
-            GlStateManager._enableBlend();
-            GlStateManager._enableDepthTest();
             // consider the following https://github.com/0x3C50/Renderer
             int color = getGradientColor();
             float[] colorFloat = Color.RGBtoHSB((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, null);
@@ -235,20 +232,6 @@ public class GazetteerWaypointConfig extends Screen{
 
         private void setValueFromMouse(MouseButtonEvent mouseButtonEvent){
             this.setValue((mouseButtonEvent.x() - (double)(this.getX() + 4)) / (double)(this.width - 8));
-        }
-    }
-
-    private static class SpriteButton extends Button{
-        public SpriteButton(int x, int y, int width, int height, OnPress onPress){
-            super(x, y, width, height, Component.literal(""), onPress, DEFAULT_NARRATION);
-        }
-
-        @Override
-        protected void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta){
-            Identifier icon = Identifier.fromNamespaceAndPath("gazetteer", "icon/change");
-            GlStateManager._enableBlend();
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, icon, getX(), getY(), width, height);
-            GlStateManager._disableBlend();
         }
     }
 

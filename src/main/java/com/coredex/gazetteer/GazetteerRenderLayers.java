@@ -1,15 +1,16 @@
 package com.coredex.gazetteer;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.coredex.gazetteer.mixin.GazetteerRenderTypeAccessor;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.DepthStencilState;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.CompareOp;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.LayeringTransform;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.util.Util;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -23,14 +24,14 @@ public class GazetteerRenderLayers{
                     .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
                     .build()
     );
+
     public static final Function<Identifier, RenderType> POSITION_TEX_COLOR = Util.memoize(
-            texture -> RenderType.create(
+            texture -> GazetteerRenderTypeAccessor.gazetteer$create(
                     "gazetteer:pos_text_color",
                     RenderSetup.builder(POSITION_TEX_COLOR_PIPELINE)
-                        .bufferSize(1536)
-                        .setLayeringTransform(LayeringTransform.NO_LAYERING)
-                        .withTexture("Sampler0", texture)
-                        .createRenderSetup()
+                            .setLayeringTransform(LayeringTransform.NO_LAYERING)
+                            .withTexture("Sampler0", texture)
+                            .createRenderSetup()
             )
     );
 }

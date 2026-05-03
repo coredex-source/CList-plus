@@ -1,6 +1,5 @@
 package com.coredex.gazetteer;
 
-import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSliderButton;
@@ -16,7 +15,6 @@ import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import org.joml.Matrix3x2f;
@@ -74,12 +72,12 @@ public class GazetteerFolderConfig extends Screen{
                 }
             }
             GazetteerClient.variables.savedSinceLastUpdate = false;
-            GazetteerVariables.minecraftClient.setScreen(new GazetteerWaypointScreen(Component.literal("Waypoints")));
+            GazetteerVariables.minecraftClient.gui.setScreen(new GazetteerWaypointScreen(Component.literal("Waypoints")));
         }).width(150).build(), 1, gridLayout.newCellSettings().paddingBottom(10));
         rowHelper.addChild(Button.builder(Component.translatable("gui.done"), button -> {
             confirmed = true;
             GazetteerClient.variables.savedSinceLastUpdate = false;
-            GazetteerVariables.minecraftClient.setScreen(new GazetteerWaypointScreen(Component.literal("Waypoints")));
+            GazetteerVariables.minecraftClient.gui.setScreen(new GazetteerWaypointScreen(Component.literal("Waypoints")));
         }).width(150).build(), 1, gridLayout.newCellSettings().paddingBottom(10));
 
         this.folderName = new EditBox(font, (this.width - 150) / 2, (this.height - 20) / 2 - 80, 150, 20, Component.literal(""));
@@ -103,7 +101,7 @@ public class GazetteerFolderConfig extends Screen{
         addRenderableWidget(folderColor);
         addRenderableWidget(dimButton);
 
-        changeColor = new SpriteButton((this.width - 50) / 2 + 38, (this.height - 20) / 2 - 15, 12, 12, button -> renderColorPicker = !renderColorPicker);
+        changeColor = new GazetteerSpriteButton((this.width - 50) / 2 + 38, (this.height - 20) / 2 - 15, 12, 12, button -> renderColorPicker = !renderColorPicker, () -> GazetteerSpriteButton.CHANGE_ICON);
         GazetteerWaypointColor colorRef = this.colorObj;
         GazetteerFolder folderRef = this.folder;
         this.h = new GazetteerWaypointConfig.HSVSlider((this.width - 50) / 2, (this.height - 20) / 2 - 15, 110, 15, Component.literal("H: " + hsv[0]), hsv[0] / 360, 0){
@@ -177,7 +175,7 @@ public class GazetteerFolderConfig extends Screen{
         GazetteerClient.variables.savedSinceLastUpdate = false;
     }
 
-    private SpriteButton changeColor;
+    private GazetteerSpriteButton changeColor;
 
     @Override
     public void extractRenderState(@NonNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta){
@@ -256,17 +254,4 @@ public class GazetteerFolderConfig extends Screen{
         super.onClose();
     }
 
-    private static class SpriteButton extends Button{
-        public SpriteButton(int x, int y, int width, int height, OnPress onPress){
-            super(x, y, width, height, Component.literal(""), onPress, DEFAULT_NARRATION);
-        }
-
-        @Override
-        protected void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta){
-            Identifier icon = Identifier.fromNamespaceAndPath("gazetteer", "icon/change");
-            GlStateManager._enableBlend();
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, icon, getX(), getY(), width, height);
-            GlStateManager._disableBlend();
-        }
-    }
 }

@@ -1,12 +1,10 @@
 package com.coredex.gazetteer;
 
-import com.mojang.blaze3d.opengl.GlStateManager;
 import net.minecraft.client.gui.ActiveTextCollector;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
@@ -14,7 +12,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.components.Tooltip;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.compress.utils.Lists;
@@ -81,7 +78,7 @@ public class GazetteerWaypointScreen extends Screen{
             GazetteerFolder folder = new GazetteerFolder(GazetteerFolder.generateId(), "New Folder", randomColor.getHexNoAlpha(), true, true, null, dim);
             GazetteerClient.variables.folders.add(folder);
             GazetteerClient.variables.savedSinceLastUpdate = false;
-            GazetteerVariables.minecraftClient.setScreen(new GazetteerFolderConfig(Component.literal("Folder Config"), folder, true));
+            GazetteerVariables.minecraftClient.gui.setScreen(new GazetteerFolderConfig(Component.literal("Folder Config"), folder, true));
         }).bounds(waypointLeft + addBtnWidth + GAP, contentTop, waypointWidth - addBtnWidth - GAP, 20).build();
         addRenderableWidget(addFolderButton);
 
@@ -120,7 +117,7 @@ public class GazetteerWaypointScreen extends Screen{
         }).bounds(GAP + (btnWidth + GAP), buttonY, btnWidth, 20).build();
         copyCoordinatesButton.setTooltip(Tooltip.create(Component.translatable("tooltip.copy.waypoint.coordinates").append(Component.literal("\n\nRight-click to convert between Overworld and Nether coords.\nCTRL + Right-click to convert and create without editing."))));
 
-        editWaypointButton = Button.builder(Component.translatable("selectWorld.edit"), button -> GazetteerVariables.minecraftClient.setScreen(new GazetteerWaypointConfig(Component.literal("Config"), selectedWaypointId, false))).bounds(GAP + (btnWidth + GAP) * 2, buttonY, btnWidth, 20).build();
+        editWaypointButton = Button.builder(Component.translatable("selectWorld.edit"), button -> GazetteerVariables.minecraftClient.gui.setScreen(new GazetteerWaypointConfig(Component.literal("Config"), selectedWaypointId, false))).bounds(GAP + (btnWidth + GAP) * 2, buttonY, btnWidth, 20).build();
 
         addRenderableWidget(deleteWaypointButton);
         addRenderableWidget(copyCoordinatesButton);
@@ -225,7 +222,7 @@ public class GazetteerWaypointScreen extends Screen{
             if(ctrlHeld){
                 refreshAll();
             } else {
-                GazetteerVariables.minecraftClient.setScreen(new GazetteerWaypointConfig(Component.literal("Config"), newId, false));
+                GazetteerVariables.minecraftClient.gui.setScreen(new GazetteerWaypointConfig(Component.literal("Config"), newId, false));
             }
             return true;
         }
@@ -695,7 +692,7 @@ public class GazetteerWaypointScreen extends Screen{
         private class FolderEntry extends ListEntry{
             private final GazetteerFolder folder;
             private final int depth;
-            private final SpriteButton visibilityBtn;
+            private final GazetteerSpriteButton visibilityBtn;
             private final IconButton editBtn;
             private final IconButton deleteBtn;
             private final IconButton subfolderBtn;
@@ -703,7 +700,7 @@ public class GazetteerWaypointScreen extends Screen{
             public FolderEntry(GazetteerFolder folder, int depth){
                 this.folder = folder;
                 this.depth = depth;
-                this.visibilityBtn = new SpriteButton(0, 0, 16, 12, button -> {
+                this.visibilityBtn = new GazetteerSpriteButton(0, 0, 16, 12, button -> {
                     if(folder.visible){
                         boolean hasAny = false;
                         boolean allOff = true;
@@ -728,35 +725,10 @@ public class GazetteerWaypointScreen extends Screen{
                     folder.toggleVisibility();
                     GazetteerClient.rebuildFolderIndices();
                     folderBtnClicked = true;
-                }, -1){
-                    @Override
-                    protected void extractContents(@NonNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta){
-                        boolean effectiveVisible = folder.visible;
-                        if(effectiveVisible){
-                            boolean hasAny = false;
-                            boolean allOff = true;
-                            for(GazetteerWaypoint wp : GazetteerClient.variables.waypoints){
-                                if(folder.id.equals(wp.getFolderId(selectedCategory))){
-                                    hasAny = true;
-                                    if(wp.render){ allOff = false; break; }
-                                }
-                            }
-                            if(hasAny && allOff) effectiveVisible = false;
-                        }
-                        Identifier eyeIcon;
-                        if(effectiveVisible){
-                            eyeIcon = Identifier.fromNamespaceAndPath("gazetteer", "icon/visible");
-                        } else {
-                            eyeIcon = Identifier.fromNamespaceAndPath("gazetteer", "icon/not_visible");
-                        }
-                        GlStateManager._enableBlend();
-                        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, eyeIcon, getX(), getY(), width, height);
-                        GlStateManager._disableBlend();
-                    }
-                };
+                }, () -> GazetteerSpriteButton.visibilityIcon(isFolderEffectivelyVisible(folder)));
                 this.editBtn = new IconButton(0, 0, 12, 12, () -> {
                     folderBtnClicked = true;
-                    GazetteerVariables.minecraftClient.setScreen(new GazetteerFolderConfig(Component.literal("Folder Config"), folder, false));
+                    GazetteerVariables.minecraftClient.gui.setScreen(new GazetteerFolderConfig(Component.literal("Folder Config"), folder, false));
                 }){
                     @Override
                     protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta){
@@ -796,7 +768,7 @@ public class GazetteerWaypointScreen extends Screen{
                     GazetteerFolder sub = new GazetteerFolder(GazetteerFolder.generateId(), "New Folder", randomColor.getHexNoAlpha(), true, true, folder.id, folder.dimension);
                     GazetteerClient.variables.folders.add(sub);
                     GazetteerClient.variables.savedSinceLastUpdate = false;
-                    GazetteerVariables.minecraftClient.setScreen(new GazetteerFolderConfig(Component.literal("Folder Config"), sub, true));
+                    GazetteerVariables.minecraftClient.gui.setScreen(new GazetteerFolderConfig(Component.literal("Folder Config"), sub, true));
                 }){
                     @Override
                     protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta){
@@ -862,7 +834,7 @@ public class GazetteerWaypointScreen extends Screen{
             private final int depth;
             private final Component waypointName;
             private final Component dimension;
-            private final SpriteButton visibility;
+            private final GazetteerSpriteButton visibility;
             private final InvisibleButton select;
             private final List<GuiEventListener> entryChildren;
 
@@ -871,12 +843,12 @@ public class GazetteerWaypointScreen extends Screen{
                 this.depth = depth;
                 this.waypointName = Component.nullToEmpty(GazetteerClient.variables.waypoints.get(waypointIndex).name);
                 this.dimension = GazetteerClient.variables.waypoints.get(waypointIndex).getDimensionText();
-                this.visibility = new SpriteButton(0, 0, 16, 12, button -> {
+                this.visibility = new GazetteerSpriteButton(0, 0, 16, 12, button -> {
                     GazetteerClient.variables.waypoints.get(waypointIndex).toggleVisibility();
                     selectedWaypointId = waypointIndex;
                     GazetteerWaypoint w = GazetteerClient.variables.waypoints.get(waypointIndex);
                     copyCoordinatesButton.setMessage(Component.literal(w.x + " " + w.y + " " + w.z));
-                }, waypointIndex);
+                }, () -> GazetteerSpriteButton.visibilityIcon(GazetteerClient.variables.waypoints.get(waypointIndex).render));
                 this.select = new InvisibleButton(0, 0, listWidth - 12, 25, button -> {
                     selectedWaypointId = waypointIndex;
                     GazetteerWaypoint w = GazetteerClient.variables.waypoints.get(waypointIndex);
@@ -936,6 +908,22 @@ public class GazetteerWaypointScreen extends Screen{
                 return handled || super.mouseReleased(mouseButtonEvent);
             }
         }
+
+        private boolean isFolderEffectivelyVisible(GazetteerFolder folder){
+            if(!folder.visible){
+                return false;
+            }
+            boolean hasAny = false;
+            for(GazetteerWaypoint waypoint : GazetteerClient.variables.waypoints){
+                if(folder.id.equals(waypoint.getFolderId(selectedCategory))){
+                    hasAny = true;
+                    if(waypoint.render){
+                        return true;
+                    }
+                }
+            }
+            return !hasAny;
+        }
     }
 
     private static class InvisibleButton extends Button{
@@ -945,29 +933,6 @@ public class GazetteerWaypointScreen extends Screen{
 
         @Override
         protected void extractContents(@NonNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta){}
-    }
-
-    private static class SpriteButton extends Button{
-        private final int id;
-
-        public SpriteButton(int x, int y, int width, int height, OnPress onPress, int coordinateId){
-            super(x, y, width, height, Component.literal(""), onPress, DEFAULT_NARRATION);
-            this.id = coordinateId;
-        }
-
-        @Override
-        protected void extractContents(@NonNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta){
-            Identifier eyeIcon;
-            if(GazetteerClient.variables.waypoints.get(id).render){
-                eyeIcon = Identifier.fromNamespaceAndPath("gazetteer", "icon/visible");
-            }
-            else{
-                eyeIcon = Identifier.fromNamespaceAndPath("gazetteer", "icon/not_visible");
-            }
-            GlStateManager._enableBlend();
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, eyeIcon, getX(), getY(), width, height);
-            GlStateManager._disableBlend();
-        }
     }
 
     private static abstract class IconButton extends AbstractWidget{

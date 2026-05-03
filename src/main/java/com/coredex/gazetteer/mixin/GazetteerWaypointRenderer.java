@@ -1,21 +1,21 @@
 package com.coredex.gazetteer.mixin;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.coredex.gazetteer.GazetteerConfig;
+import com.coredex.gazetteer.GazetteerRenderLayers;
+import com.coredex.gazetteer.GazetteerVariables;
+import com.coredex.gazetteer.GazetteerWaypoint;
+import com.coredex.gazetteer.GazetteerWaypointColor;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.gui.Font;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import com.mojang.math.Axis;
 import net.minecraft.world.phys.Vec3;
-import com.coredex.gazetteer.*;
 import org.apache.commons.lang3.StringUtils;
-import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -86,67 +86,67 @@ public abstract class GazetteerWaypointRenderer{
         s = StringUtils.capitalize(s);
         return s;
     }
-    // This is a temporary resolution to the WorldRenderEvents being removed. Honestly we'll just have to wait for a new implementation
-    @Inject(method ="renderLevel", at = @At("RETURN"))
-    private void afterRender(CallbackInfo ci) {
-        if(!variables.waypoints.isEmpty() && GazetteerConfig.waypointsToggled && !GazetteerVariables.minecraftClient.options.hideGui){
-            for(int i = 0; i < variables.waypoints.size(); i++){
-                GazetteerWaypoint waypoint = variables.waypoints.get(i);
-                int distanceWithoutDecimalPlaces = (int) distanceTo(waypoint);
-                if(Objects.equals(waypoint.getDimensionString(), getDimension(variables.lastWorld.dimension().identifier().toString())) && waypoint.render && (GazetteerConfig.renderDistance == 0 || GazetteerConfig.renderDistance >= distanceWithoutDecimalPlaces)){
-                    Camera camera = GazetteerVariables.minecraftClient.gameRenderer.getMainCamera();
-                    float size = calculateWaypointSize();
-                    Vec3 renderCoords = calculateRenderCoords(waypoint, camera, distanceWithoutDecimalPlaces);
-                    Vec3 targetPosition = new Vec3(renderCoords.x + 0.5, renderCoords.y + 1, renderCoords.z + 0.5);
-                    Vec3 transformedPosition = targetPosition.subtract(camera.position());
-                    // TODO: Wait for a new implementation of WorldRenderEvents and then use the PoseStack from guiGraphics instead of recalculating everything by ourselves
-                    PoseStack poseStack = new PoseStack();
-                    poseStack.translate(0.25, 0, 0.25);
-                    poseStack.mulPose(Axis.XP.rotationDegrees(camera.xRot()));
-                    poseStack.mulPose(Axis.YP.rotationDegrees(camera.yRot() + 180.0F));
-                    poseStack.translate(transformedPosition.x, transformedPosition.y, transformedPosition.z);
-                    poseStack.mulPose(camera.rotation());
-                    poseStack.scale(-size, size, size);
-                    Matrix4f positionMatrix = poseStack.last().pose();
-                    Tesselator tesselator = Tesselator.getInstance();
-                    BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-                    GazetteerWaypointColor color = variables.colors.get(i);
-                    buffer.addVertex(positionMatrix, 0, 1, 0).setColor(color.r, color.g, color.b, 1f).setUv(0f, 0f);
-                    buffer.addVertex(positionMatrix, 0, 0, 0).setColor(color.r, color.g, color.b, 1f).setUv(0f, 1f);
-                    buffer.addVertex(positionMatrix, 1, 0, 0).setColor(color.r, color.g, color.b, 1f).setUv(1f, 1f);
-                    buffer.addVertex(positionMatrix, 1, 1, 0).setColor(color.r, color.g, color.b, 1f).setUv(1f, 0f);
-                    Identifier icon;
-                    if(waypoint.deathpoint){
-                        icon = Identifier.fromNamespaceAndPath("gazetteer", "skull.png");
-                    }
-                    else{
-                        if(GazetteerConfig.squareWaypoints){
-                            icon = Identifier.fromNamespaceAndPath("gazetteer", "waypoint_icon_square.png");
-                        }
-                        else{
-                            icon = Identifier.fromNamespaceAndPath("gazetteer", "waypoint_icon.png");
-                        }
-                    }
-                    GazetteerRenderLayers.POSITION_TEX_COLOR.apply(icon).draw(buffer.buildOrThrow());
-                    Font font = GazetteerVariables.minecraftClient.font;
-                    String labelText = waypoint.name + " (" + distanceWithoutDecimalPlaces + " m)";
-                    int textWidth = font.width(labelText);
-                    poseStack.scale(-0.025f, -0.025f, 0.025f);
-                    size = calculateTextSize();
-                    poseStack.scale((float) Math.log(size * 4), (float) Math.log(size * 4), (float) Math.log(size * 4));
-                    poseStack.translate(0, -20, 0);
-                    positionMatrix = poseStack.last().pose();
-                    float h = (float) (-textWidth / 2);
-                    MultiBufferSource.BufferSource b = GazetteerVariables.minecraftClient.renderBuffers().bufferSource();
-                    if(GazetteerConfig.waypointTextBackground){
-                        font.drawInBatch(labelText, h, 0, 0xFFFFFFFF, false, positionMatrix, b, Font.DisplayMode.SEE_THROUGH, 0x90000000, 15728880);
-                    }
-                    else{
-                        font.drawInBatch(labelText, h, 0, 0xFFFFFFFF, false, positionMatrix, b, Font.DisplayMode.SEE_THROUGH, 0x00000000, 15728880);
-                    }
-                    b.endBatch();
-                }
+
+    @Unique
+    private Identifier resolveWaypointIcon(GazetteerWaypoint waypoint){
+        if(waypoint.deathpoint){
+            return Identifier.fromNamespaceAndPath("gazetteer", "skull.png");
+        }
+        if(GazetteerConfig.squareWaypoints){
+            return Identifier.fromNamespaceAndPath("gazetteer", "waypoint_icon_square.png");
+        }
+        return Identifier.fromNamespaceAndPath("gazetteer", "waypoint_icon.png");
+    }
+
+    @Unique
+    private PoseStack createWaypointPose(Camera camera, Vec3 transformedPosition, float size){
+        PoseStack poseStack = new PoseStack();
+        poseStack.translate(transformedPosition.x, transformedPosition.y, transformedPosition.z);
+        poseStack.mulPose(camera.rotation());
+        poseStack.scale(-size, size, size);
+        return poseStack;
+    }
+
+    @Inject(method ="submitFeatures", at = @At("RETURN"))
+    private void afterSubmitFeatures(LevelRenderState levelRenderState, SubmitNodeCollector submitNodeCollector, boolean drawBlockOutline, CallbackInfo ci) {
+        if(variables.waypoints.isEmpty() || !GazetteerConfig.waypointsToggled || GazetteerVariables.minecraftClient.player == null || variables.lastWorld == null || GazetteerVariables.minecraftClient.gui.hud.isHidden()){
+            return;
+        }
+
+        Camera camera = GazetteerVariables.minecraftClient.gameRenderer.mainCamera();
+        Font font = GazetteerVariables.minecraftClient.font;
+
+        for(int i = 0; i < variables.waypoints.size(); i++){
+            GazetteerWaypoint waypoint = variables.waypoints.get(i);
+            int distanceWithoutDecimalPlaces = (int) distanceTo(waypoint);
+            if(!Objects.equals(waypoint.getDimensionString(), getDimension(variables.lastWorld.dimension().identifier().toString())) || !waypoint.render || (GazetteerConfig.renderDistance != 0 && GazetteerConfig.renderDistance < distanceWithoutDecimalPlaces)){
+                continue;
             }
+
+            float size = calculateWaypointSize();
+            Vec3 renderCoords = calculateRenderCoords(waypoint, camera, distanceWithoutDecimalPlaces);
+            Vec3 targetPosition = new Vec3(renderCoords.x + 0.5, renderCoords.y + 1, renderCoords.z + 0.5);
+            Vec3 transformedPosition = targetPosition.subtract(camera.position());
+            PoseStack iconPose = createWaypointPose(camera, transformedPosition, size);
+            GazetteerWaypointColor color = variables.colors.get(i);
+            Identifier icon = resolveWaypointIcon(waypoint);
+
+            submitNodeCollector.submitCustomGeometry(iconPose, GazetteerRenderLayers.POSITION_TEX_COLOR.apply(icon), (pose, vertices) -> {
+                vertices.addVertex(pose, -0.5f, 0.5f, 0).setColor(color.r, color.g, color.b, 1f).setUv(0f, 0f);
+                vertices.addVertex(pose, -0.5f, -0.5f, 0).setColor(color.r, color.g, color.b, 1f).setUv(0f, 1f);
+                vertices.addVertex(pose, 0.5f, -0.5f, 0).setColor(color.r, color.g, color.b, 1f).setUv(1f, 1f);
+                vertices.addVertex(pose, 0.5f, 0.5f, 0).setColor(color.r, color.g, color.b, 1f).setUv(1f, 0f);
+            });
+
+            String labelText = waypoint.name + " (" + distanceWithoutDecimalPlaces + " m)";
+            int textWidth = font.width(labelText);
+            PoseStack textPose = createWaypointPose(camera, transformedPosition, size);
+            textPose.scale(-0.025f, -0.025f, 0.025f);
+            size = calculateTextSize();
+            textPose.scale((float) Math.log(size * 4), (float) Math.log(size * 4), (float) Math.log(size * 4));
+            textPose.translate(0, -20, 0);
+
+            submitNodeCollector.submitText(textPose, (float) (-textWidth / 2), 0, Component.literal(labelText).getVisualOrderText(), false, Font.DisplayMode.SEE_THROUGH, 15728880, 0xFFFFFFFF, GazetteerConfig.waypointTextBackground ? 0x90000000 : 0x00000000, 0);
         }
     }
 }
