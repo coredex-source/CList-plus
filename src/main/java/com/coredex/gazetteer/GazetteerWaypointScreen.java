@@ -21,10 +21,7 @@ import org.apache.commons.compress.utils.Lists;
 import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public class GazetteerWaypointScreen extends Screen{
     private CategoryList categoryList;
@@ -54,14 +51,19 @@ public class GazetteerWaypointScreen extends Screen{
 
     @Override
     protected void init(){
-        if(selectedCategory == null && GazetteerClient.variables.lastWorld != null){
-            selectedCategory = GazetteerClient.variables.lastWorld.dimension().identifier().toString();
+        boolean showCategoryList = shouldShowCategoryList();
+
+        if(selectedCategory == null){
+            selectedCategory = resolveInitialCategory();
+        }
+        else{
+            normalizeSelectedCategory();
         }
 
         int contentTop = TOP_PADDING;
         int contentBottom = this.height - BOTTOM_BAR_HEIGHT;
         int categoryLeft = GAP;
-        int waypointLeft = categoryLeft + CATEGORY_WIDTH + GAP;
+        int waypointLeft = showCategoryList ? categoryLeft + CATEGORY_WIDTH + GAP : GAP;
         int waypointWidth = this.width - waypointLeft - GAP;
 
         int folderBtnWidth = font.width("New Folder") + 16;
@@ -85,8 +87,13 @@ public class GazetteerWaypointScreen extends Screen{
 
         int listTop = contentTop + 24;
 
-        categoryList = new CategoryList(categoryLeft, contentTop, CATEGORY_WIDTH, contentBottom - contentTop);
-        addRenderableWidget(categoryList);
+        if(showCategoryList){
+            categoryList = new CategoryList(categoryLeft, contentTop, CATEGORY_WIDTH, contentBottom - contentTop);
+            addRenderableWidget(categoryList);
+        }
+        else{
+            categoryList = null;
+        }
 
         waypointList = new WaypointList(waypointLeft, listTop, waypointWidth, contentBottom - listTop);
         addRenderableWidget(waypointList);
@@ -121,7 +128,10 @@ public class GazetteerWaypointScreen extends Screen{
     }
 
     private void refreshAll(){
-        categoryList.refreshEntries();
+        normalizeSelectedCategory();
+        if(categoryList != null){
+            categoryList.refreshEntries();
+        }
         refreshWaypoints();
     }
 
@@ -130,19 +140,48 @@ public class GazetteerWaypointScreen extends Screen{
     }
 
     private List<String> collectDimensions(){
-        Set<String> dims = new LinkedHashSet<>();
-        for(GazetteerWaypoint wp : GazetteerClient.variables.waypoints){
-            dims.add(wp.dimension);
-        }
-        return new ArrayList<>(dims);
+        return GazetteerConfig.resolveDynamicDimensions();
     }
 
-    private String formatDimension(String raw){
-        String s = raw;
-        s = s.replace("minecraft:", "");
-        s = s.replace("_", " ");
-        s = s.replace(":", " ");
-        return org.apache.commons.lang3.StringUtils.capitalize(s);
+    private String resolveInitialCategory(){
+        if(!shouldShowCategoryList()){
+            return null;
+        }
+
+        String defaultCategory = GazetteerConfig.resolveDefaultCategory();
+        List<String> availableDimensions = collectDimensions();
+        if(defaultCategory == null || availableDimensions.contains(defaultCategory)){
+            return defaultCategory;
+        }
+        return getFallbackCategory(availableDimensions);
+    }
+
+    private void normalizeSelectedCategory(){
+        if(!shouldShowCategoryList()){
+            selectedCategory = null;
+            return;
+        }
+
+        if(selectedCategory == null){
+            return;
+        }
+
+        List<String> availableDimensions = collectDimensions();
+        if(!availableDimensions.contains(selectedCategory)){
+            selectedCategory = getFallbackCategory(availableDimensions);
+        }
+    }
+
+    private String getFallbackCategory(List<String> availableDimensions){
+        String currentDimension = GazetteerConfig.resolveCurrentDimension();
+        if(currentDimension != null && availableDimensions.contains(currentDimension)){
+            return currentDimension;
+        }
+        return null;
+    }
+
+    private boolean shouldShowCategoryList(){
+        return !GazetteerConfig.legacyCoordinateSorting;
     }
 
     @Override
@@ -175,7 +214,7 @@ public class GazetteerWaypointScreen extends Screen{
             }
             Window window = GazetteerVariables.minecraftClient.getWindow();
             boolean ctrlHeld = InputConstants.isKeyDown(window, InputConstants.KEY_LCONTROL);
-            String name = wp.name + " (" + formatDimension(targetDim) + ")";
+            String name = wp.name + " (" + GazetteerConfig.formatDimension(targetDim) + ")";
             GazetteerClient.variables.waypoints.add(new GazetteerWaypoint(newX, newY, newZ, name, targetDim, true, false));
             GazetteerClient.variables.colors.add(new GazetteerWaypointColor(
                     GazetteerClient.variables.colors.get(selectedWaypointId).getHSV()[0] / 360f,
@@ -217,9 +256,9 @@ public class GazetteerWaypointScreen extends Screen{
 
         public void refreshEntries(){
             clearEntries();
-            addEntry(new CategoryEntry(null, Component.literal("All")));
+            addEntry(new CategoryEntry(null, GazetteerConfig.getDimensionLabel(null)));
             for(String dim : collectDimensions()){
-                addEntry(new CategoryEntry(dim, Component.literal(formatDimension(dim))));
+                addEntry(new CategoryEntry(dim, GazetteerConfig.getDimensionLabel(dim)));
             }
         }
 

@@ -92,8 +92,7 @@ public class GazetteerFolderConfig extends Screen{
         folderColor.setMaxLength(6);
         folderColor.setValue(colorObj.getHexNoAlpha());
 
-        String dimLabel = selectedDimension == null ? "All" : formatDimension(selectedDimension);
-        dimButton = Button.builder(Component.literal(dimLabel), button -> {
+        dimButton = Button.builder(GazetteerConfig.getDimensionLabel(selectedDimension), button -> {
             cycleDimension();
         }).bounds((this.width - 150) / 2, (this.height - 20) / 2 - 50, 150, 20).build();
 
@@ -165,22 +164,17 @@ public class GazetteerFolderConfig extends Screen{
         java.util.List<String> dims = new java.util.ArrayList<>();
         dims.add(null);
         java.util.Set<String> seen = new java.util.LinkedHashSet<>();
-        for(GazetteerWaypoint wp : GazetteerClient.variables.waypoints){
-            seen.add(wp.dimension);
+        if(selectedDimension != null){
+            seen.add(selectedDimension);
         }
+        seen.addAll(GazetteerConfig.resolveDynamicDimensions());
         dims.addAll(seen);
         int idx = dims.indexOf(selectedDimension);
         idx = (idx + 1) % dims.size();
         selectedDimension = dims.get(idx);
         folder.dimension = selectedDimension;
-        String dimLabel = selectedDimension == null ? "All" : formatDimension(selectedDimension);
-        dimButton.setMessage(Component.literal(dimLabel));
+        dimButton.setMessage(GazetteerConfig.getDimensionLabel(selectedDimension));
         GazetteerClient.variables.savedSinceLastUpdate = false;
-    }
-
-    private String formatDimension(String raw){
-        String s = raw.replace("minecraft:", "").replace("_", " ").replace(":", " ");
-        return org.apache.commons.lang3.StringUtils.capitalize(s);
     }
 
     private SpriteButton changeColor;
