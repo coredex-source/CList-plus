@@ -14,6 +14,7 @@ import org.lwjgl.glfw.GLFW;
 import eu.midnightdust.lib.config.MidnightConfig;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
@@ -248,6 +249,40 @@ public class GazetteerClient implements ClientModInitializer{
 
     public static void addRandomWaypointColor(){
         variables.colors.add(new GazetteerWaypointColor(rand.nextFloat(), rand.nextFloat(), rand.nextFloat()));
+    }
+
+    public static void reloadCurrentWorldData(){
+        if(variables.worldName == null){
+            return;
+        }
+
+        List<GazetteerWaypoint> existingWaypoints = variables.waypoints;
+        List<GazetteerWaypointColor> existingColors = variables.colors;
+        List<GazetteerFolder> existingFolders = variables.folders;
+
+        variables.waypoints = new ArrayList<>();
+        variables.colors = new ArrayList<>();
+        variables.folders = new ArrayList<>();
+
+        List<GazetteerWaypoint> importedWaypoints = GazetteerData.loadListFromFile("gazetteer_" + variables.worldName);
+        List<GazetteerFolder> importedFolders = GazetteerData.loadFoldersFromFile("gazetteer_folders_" + variables.worldName);
+
+        if(importedWaypoints == null && importedFolders == null){
+            variables.waypoints = existingWaypoints;
+            variables.colors = existingColors;
+            variables.folders = existingFolders;
+            return;
+        }
+
+        if(importedWaypoints != null){
+            variables.waypoints = importedWaypoints;
+        }
+        if(importedFolders != null){
+            variables.folders = importedFolders;
+        }
+
+        rebuildFolderIndices();
+        variables.savedSinceLastUpdate = true;
     }
 
     public static void checkIfSaveIsNeeded(boolean force){

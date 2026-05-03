@@ -6,17 +6,61 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 public class GazetteerData{
-    public static void saveListToFile(String fileName, List<GazetteerWaypoint> waypointList){
+    private static File getGazetteerDataDir(){
+        return FabricLoader.getInstance().getConfigDir().resolve("gazetteer").toFile();
+    }
+
+    private static File getCoordinateListDataDir(){
+        return FabricLoader.getInstance().getConfigDir().resolve("coordinatelist").toFile();
+    }
+
+    private static void ensureGazetteerDataDirExists(){
         if(!Files.exists(FabricLoader.getInstance().getConfigDir().resolve("gazetteer"))){
             try{
                 Files.createDirectories(FabricLoader.getInstance().getConfigDir().resolve("gazetteer"));
             }
             catch(IOException ignored){}
         }
-        File dataDir = FabricLoader.getInstance().getConfigDir().resolve("gazetteer").toFile();
+    }
+
+    public static List<String> importCoordinateListFiles(){
+        File sourceDir = getCoordinateListDataDir();
+        if(!sourceDir.isDirectory()){
+            return null;
+        }
+
+        ensureGazetteerDataDirExists();
+        File[] sourceFiles = sourceDir.listFiles(File::isFile);
+        List<String> importedFiles = Lists.newArrayList();
+        if(sourceFiles == null){
+            return importedFiles;
+        }
+
+        File targetDir = getGazetteerDataDir();
+        for(File sourceFile : sourceFiles){
+            String targetName = sourceFile.getName();
+            if(targetName.startsWith("clist")){
+                targetName = "gazetteer" + targetName.substring("clist".length());
+            }
+            try{
+                Files.copy(sourceFile.toPath(), targetDir.toPath().resolve(targetName), StandardCopyOption.REPLACE_EXISTING);
+                importedFiles.add(targetName);
+            }
+            catch(IOException e){
+                Gazetteer.LOGGER.error("Failed to import CoordinateList data file {}", sourceFile.getName(), e);
+            }
+        }
+
+        return importedFiles;
+    }
+
+    public static void saveListToFile(String fileName, List<GazetteerWaypoint> waypointList){
+        ensureGazetteerDataDirExists();
+        File dataDir = getGazetteerDataDir();
         File file = new File(dataDir, fileName);
         try(PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)))){
             for(int i = 0; i < waypointList.size(); i++){
@@ -31,7 +75,7 @@ public class GazetteerData{
     }
 
     public static List<GazetteerWaypoint> loadListFromFile(String fileName){
-        File dataDir = FabricLoader.getInstance().getConfigDir().resolve("gazetteer").toFile();
+        File dataDir = getGazetteerDataDir();
         File file = new File(dataDir, fileName);
         if(!file.exists()){
             return null;
@@ -83,7 +127,7 @@ public class GazetteerData{
     }
 
     public static void deleteLegacyFile(String fileName){
-        File dataDir = FabricLoader.getInstance().getConfigDir().resolve("gazetteer").toFile();
+        File dataDir = getGazetteerDataDir();
         File file = new File(dataDir, fileName);
         if(file.exists()){
             boolean ignored = file.delete();
@@ -91,13 +135,8 @@ public class GazetteerData{
     }
 
     public static void saveFoldersToFile(String fileName, List<GazetteerFolder> folders){
-        if(!Files.exists(FabricLoader.getInstance().getConfigDir().resolve("gazetteer"))){
-            try{
-                Files.createDirectories(FabricLoader.getInstance().getConfigDir().resolve("gazetteer"));
-            }
-            catch(IOException ignored){}
-        }
-        File dataDir = FabricLoader.getInstance().getConfigDir().resolve("gazetteer").toFile();
+        ensureGazetteerDataDirExists();
+        File dataDir = getGazetteerDataDir();
         File file = new File(dataDir, fileName);
         try(PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)))){
             for(GazetteerFolder folder : folders){
@@ -110,7 +149,7 @@ public class GazetteerData{
     }
 
     public static List<GazetteerFolder> loadFoldersFromFile(String fileName){
-        File dataDir = FabricLoader.getInstance().getConfigDir().resolve("gazetteer").toFile();
+        File dataDir = getGazetteerDataDir();
         File file = new File(dataDir, fileName);
         if(!file.exists()){
             return null;
@@ -145,7 +184,7 @@ public class GazetteerData{
     }
 
     public static List<String> loadListFromFileLegacy(String fileName){
-        File dataDir = FabricLoader.getInstance().getConfigDir().resolve("gazetteer").toFile();
+        File dataDir = getGazetteerDataDir();
         File file = new File(dataDir, fileName);
         if(!file.exists()){
             return null;
