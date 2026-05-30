@@ -20,7 +20,7 @@ public class GazetteerRenderLayers{
             RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
                     .withLocation("pipeline/position_tex_color")
                     .withCull(false)
-                    .withColorTargetState(new ColorTargetState(Optional.empty(), ColorTargetState.WRITE_ALL))
+                    .withColorTargetState(new ColorTargetState(Optional.empty(), com.mojang.blaze3d.GpuFormat.RGBA8_UNORM, ColorTargetState.WRITE_ALL))
                     .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
                     .build()
     );
